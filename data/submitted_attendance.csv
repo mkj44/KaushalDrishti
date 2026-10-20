@@ -1,0 +1,8 @@
+centre_id,camera_id,session_id,date,submitted_count,scenario
+TC001,cam1,SESS_NORMAL,2026-10-20,10,normal
+TC001,cam1,SESS_OVERREPORT,2026-10-20,25,overreported
+TC001,cam1,SESS_EMPTY,2026-10-20,20,empty_session
+TC001,cam1,SESS_WB_MISSING,2026-10-20,8,workbench_missing
+TC001,cam2,SESS_MACHINE_IDLE,2026-10-20,10,machine_idle
+TC001,cam1,SESS_LOW_LIGHT,2026-10-20,6,low_light
+TC001,cam1,SESS_OBSTRUCTED,2026-10-20,15,camera_obstructed

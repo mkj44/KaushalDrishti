@@ -1,0 +1,33 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Node & Frontend builds
+dashboard/node_modules/
+dashboard/dist/
+.npm
+npm-debug.log*
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Databases & local queues
+*.db
+*.sqlite
+*.sqlite3
+skillsight.db
+edge_agent/offline_queue.db
+
+# Model weights (auto-downloaded on first run)
+*.pt
+*.onnx
+
+# OS files
+.DS_Store
+Thumbs.db

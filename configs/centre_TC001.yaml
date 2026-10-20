@@ -1,0 +1,112 @@
+centre:
+  centre_id: "TC001"
+  centre_name: "Skill Training Centre Raipur"
+  scheme: "Pradhan Mantri Kaushal Vikas Yojana (PMKVY)"
+  district: "Raipur"
+  state: "Chhattisgarh"
+  contact_email: "compliance@tc001.skillsight.gov.in"
+
+cameras:
+  - id: "cam1"
+    name: "Classroom 1 Main"
+    source: "data/sample_videos/normal.mp4"
+    resolution: [1280, 720]
+    fps: 10
+    # Classroom ROI polygon: [ [x, y], ... ] in pixel coordinates (clockwise/counter-clockwise)
+    classroom_roi:
+      - [80, 80]
+      - [1200, 80]
+      - [1220, 710]
+      - [60, 710]
+    # Instructor zone: front podium/lectern area
+    instructor_zone:
+      - [80, 80]
+      - [420, 80]
+      - [420, 360]
+      - [80, 360]
+    exclude_instructor: true
+    min_variance: 20.0  # Frame variance threshold for camera obstruction/darkness check
+
+  - id: "cam2"
+    name: "Workshop Lab A"
+    source: "data/sample_videos/machine_idle.mp4"
+    resolution: [1280, 720]
+    fps: 10
+    classroom_roi:
+      - [40, 40]
+      - [1240, 40]
+      - [1240, 710]
+      - [40, 710]
+    instructor_zone: null
+    exclude_instructor: false
+    min_variance: 20.0
+
+inventory:
+  - id: "WB-01"
+    type: "workbench"
+    name: "Electronics Assembly Bench 1"
+    camera: "cam1"
+    zone:
+      - [100, 360]
+      - [620, 360]
+      - [620, 700]
+      - [100, 700]
+    expected_count: 4
+    countable: true
+    baseline_image: "configs/baselines/cam1_WB-01.png"
+
+  - id: "WB-02"
+    type: "workbench"
+    name: "Electronics Assembly Bench 2"
+    camera: "cam1"
+    zone:
+      - [660, 360]
+      - [1180, 360]
+      - [1180, 700]
+      - [660, 700]
+    expected_count: 4
+    countable: true
+    baseline_image: "configs/baselines/cam1_WB-02.png"
+
+  - id: "LATHE-01"
+    type: "machine"
+    name: "CNC Precision Lathe"
+    camera: "cam2"
+    zone:
+      - [200, 180]
+      - [640, 180]
+      - [640, 640]
+      - [200, 640]
+    indicator_sub_roi:
+      - [220, 200]
+      - [260, 240]
+    operability:
+      - "activity"
+      - "indicator_light"
+    countable: false
+    baseline_image: "configs/baselines/cam2_LATHE-01.png"
+
+sampling:
+  default_interval_sec: 10
+  low_bandwidth_interval_sec: 30
+  minimal_interval_sec: 60
+  persistence_k_consecutive: 3
+
+thresholds:
+  overreport_min_diff: 3
+  overreport_ratio: 0.15
+  empty_session_max: 2
+  camera_dark_variance: 20.0
+  ssim_similarity_min: 0.70
+  motion_differencing_threshold: 12.0
+  max_unoperated_sessions: 2
+
+timetable:
+  - session_id: "SESS_101"
+    name: "Morning Theory & Practical"
+    course: "CNC Operator Level 4"
+    batch_id: "B-2026-01"
+    start_time: "09:00"
+    end_time: "11:00"
+    camera_ids: ["cam1", "cam2"]
+    sanctioned_trainees: 20

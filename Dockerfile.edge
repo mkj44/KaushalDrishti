@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Download YOLOv8n weights into image
+RUN python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+
+COPY edge_agent/ edge_agent/
+COPY configs/ configs/
+COPY data/ data/
+
+ENTRYPOINT ["python", "-m", "edge_agent"]
+CMD ["--config", "configs/centre_TC001.yaml", "--source", "data/sample_videos/normal.mp4", "--api", "http://api:8000"]

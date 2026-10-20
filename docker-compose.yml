@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: skillsight-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./skillsight.db:/app/skillsight.db
+      - ./configs:/app/configs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    container_name: skillsight-dashboard
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  edge-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.edge
+    container_name: skillsight-edge-agent
+    depends_on:
+      api:
+        condition: service_healthy
+    volumes:
+      - ./configs:/app/configs
+      - ./data:/app/data
+    command: ["--config", "configs/centre_TC001.yaml", "--source", "data/sample_videos/normal.mp4", "--api", "http://api:8000"]

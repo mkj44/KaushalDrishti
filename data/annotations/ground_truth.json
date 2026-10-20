@@ -1,0 +1,92 @@
+{
+  "normal": {
+    "scenario": "normal",
+    "video": "data/sample_videos/normal.mp4",
+    "expected_headcount": 10,
+    "instructor_present": true,
+    "submitted_count": 10,
+    "inventory": {
+      "WB-01": true,
+      "WB-02": true,
+      "LATHE-01": true
+    },
+    "expected_alerts": []
+  },
+  "overreported": {
+    "scenario": "overreported",
+    "video": "data/sample_videos/overreported.mp4",
+    "expected_headcount": 4,
+    "instructor_present": true,
+    "submitted_count": 25,
+    "inventory": {
+      "WB-01": true,
+      "WB-02": true
+    },
+    "expected_alerts": [
+      "ATTENDANCE_OVERREPORT"
+    ]
+  },
+  "empty_session": {
+    "scenario": "empty_session",
+    "video": "data/sample_videos/empty_session.mp4",
+    "expected_headcount": 0,
+    "instructor_present": false,
+    "submitted_count": 20,
+    "inventory": {
+      "WB-01": true,
+      "WB-02": true
+    },
+    "expected_alerts": [
+      "SESSION_EMPTY"
+    ]
+  },
+  "workbench_missing": {
+    "scenario": "workbench_missing",
+    "video": "data/sample_videos/workbench_missing.mp4",
+    "expected_headcount": 5,
+    "instructor_present": false,
+    "submitted_count": 5,
+    "inventory": {
+      "WB-01": true,
+      "WB-02": false
+    },
+    "expected_alerts": [
+      "ITEM_MISSING"
+    ]
+  },
+  "machine_idle": {
+    "scenario": "machine_idle",
+    "video": "data/sample_videos/machine_idle.mp4",
+    "expected_headcount": 0,
+    "instructor_present": false,
+    "submitted_count": 0,
+    "inventory": {
+      "LATHE-01": true
+    },
+    "expected_alerts": [
+      "EQUIPMENT_POSSIBLY_NONFUNCTIONAL"
+    ]
+  },
+  "low_light": {
+    "scenario": "low_light",
+    "video": "data/sample_videos/low_light.mp4",
+    "expected_headcount": 6,
+    "instructor_present": false,
+    "submitted_count": 6,
+    "inventory": {
+      "WB-01": true,
+      "WB-02": true
+    },
+    "expected_alerts": []
+  },
+  "camera_obstructed": {
+    "scenario": "camera_obstructed",
+    "video": "data/sample_videos/camera_obstructed.mp4",
+    "expected_headcount": 0,
+    "instructor_present": false,
+    "submitted_count": 15,
+    "expected_alerts": [
+      "CAMERA_OFFLINE"
+    ]
+  }
+}
