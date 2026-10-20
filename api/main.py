@@ -14,7 +14,9 @@ import json
 import yaml
 from datetime import datetime
 from typing import List, Optional, Dict, Any
-from fastapi import FastAPI, Depends, HTTPException, Query, Header, status
+import os
+import shutil
+from fastapi import FastAPI, Depends, HTTPException, Query, Header, status, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
@@ -22,6 +24,7 @@ from sqlalchemy.orm import Session
 
 from api.models import init_db, SessionLocal, Centre, Camera, SessionRecord, Alert, InventoryItem
 from api.rules import DiscrepancyEngine
+from api import video_analysis
 
 # Initialize database tables
 init_db()
@@ -376,3 +379,97 @@ def export_alerts_csv(centre_id: Optional[str] = None, db: Session = Depends(get
         media_type="text/csv",
         headers={"Content-Disposition": f"attachment; filename={filename}"}
     )
+
+
+# ---------------------------------------------------------------------------
+# On-demand video analysis (upload a recorded clip -> people / chairs / layout)
+# ---------------------------------------------------------------------------
+
+MAX_UPLOAD_MB = int(os.getenv("KD_MAX_UPLOAD_MB", "500"))
+
+
+@app.post("/api/v1/analyze/video", status_code=202)
+async def analyze_video_upload(file: UploadFile = File(...)):
+    """Upload a classroom/workshop video. Returns a job id to poll."""
+    ext = os.path.splitext(file.filename or "")[1].lower()
+    if ext not in video_analysis.ALLOWED_EXTENSIONS:
+        raise HTTPException(status_code=415, detail=f"Unsupported file type '{ext}'. Use MP4, MOV, AVI, MKV or WEBM.")
+
+    os.makedirs(video_analysis.UPLOAD_DIR, exist_ok=True)
+    tmp_path = os.path.join(video_analysis.UPLOAD_DIR, f"{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}{ext}")
+    written = 0
+    with open(tmp_path, "wb") as out:
+        while chunk := await file.read(1024 * 1024):
+            written += len(chunk)
+            if written > MAX_UPLOAD_MB * 1024 * 1024:
+                out.close()
+                os.remove(tmp_path)
+                raise HTTPException(status_code=413, detail=f"Video is larger than {MAX_UPLOAD_MB} MB.")
+            out.write(chunk)
+
+    job_id = video_analysis.create_job(tmp_path, file.filename or "upload", {})
+    return {"job_id": job_id, "status": "queued"}
+
+
+@app.get("/api/v1/analyze/jobs")
+def list_analysis_jobs():
+    return {"jobs": video_analysis.list_jobs()}
+
+
+@app.get("/api/v1/analyze/jobs/{job_id}")
+def get_analysis_job(job_id: str):
+    job = video_analysis.get_job(job_id)
+    if not job:
+        raise HTTPException(status_code=404, detail="Analysis job not found")
+    return job
+
+
+class AttachRequest(BaseModel):
+    centre_id: str = "TC001"
+    camera_id: str = "upload"
+    session_id: Optional[str] = None
+    submitted_count: int = Field(..., ge=0)
+
+
+@app.post("/api/v1/analyze/jobs/{job_id}/attach")
+def attach_analysis_to_centre(job_id: str, req: AttachRequest, db: Session = Depends(get_db)):
+    """File a finished analysis as an attendance session for a centre, raising alerts on mismatch."""
+    job = video_analysis.get_job(job_id)
+    if not job or job["status"] != "completed":
+        raise HTTPException(status_code=409, detail="Analysis is not finished yet")
+
+    r = job["result"]
+    s = r["summary"]
+    estimated = s["people_median"]
+    submitted = req.submitted_count
+    session_id = req.session_id or f"VID_{job_id[:6].upper()}"
+    flags = []
+    threshold = max(2, int(round(0.15 * submitted)))
+    measured = f"median={estimated}, peak={s['people_peak']}, unique={s['unique_people']}"
+    if submitted > 0 and estimated <= 1:
+        flags.append({"rule": "SESSION_EMPTY", "severity": "high", "threshold": f"estimated <= 1 (claimed {submitted})",
+                      "measured": measured, "confidence": s["confidence"],
+                      "message": f"Uploaded footage shows an almost empty room but {submitted} trainees were claimed."})
+    elif submitted - estimated > threshold:
+        flags.append({"rule": "ATTENDANCE_OVERREPORT", "severity": "high",
+                      "threshold": f"diff > {threshold} (submitted {submitted} vs estimated {estimated})",
+                      "measured": measured, "confidence": s["confidence"],
+                      "message": f"Submitted attendance ({submitted}) exceeds the headcount in uploaded footage ({estimated})."})
+    elif estimated - submitted > threshold:
+        flags.append({"rule": "ATTENDANCE_UNDERREPORT", "severity": "low", "threshold": f"estimated - submitted > {threshold}",
+                      "measured": measured, "confidence": s["confidence"],
+                      "message": f"Uploaded footage shows {estimated} people, more than the {submitted} submitted."})
+    if s["chairs"] and estimated > s["chairs"] + 2:
+        flags.append({"rule": "SEATING_SHORTFALL", "severity": "medium", "threshold": f"people <= chairs ({s['chairs']})",
+                      "measured": measured, "confidence": s["confidence"],
+                      "message": f"{estimated} people but only {s['chairs']} chairs visible in uploaded footage."})
+
+    event = {
+        "centre_id": req.centre_id, "camera_id": req.camera_id, "session_id": session_id,
+        "submitted_count": submitted, "estimated_count": estimated,
+        "count_median": estimated, "count_p90": s["people_p90"], "unique_tracks": s["unique_people"],
+        "confidence": s["confidence"], "frames_used": r["video"]["frames_analysed"],
+        "flags": flags, "thumbnails": [k["image"] for k in r["keyframes"][:3]],
+    }
+    res = DiscrepancyEngine.process_edge_event(db, event)
+    return {"status": "success", "session_id": session_id, "flags": [f["rule"] for f in flags], "result": res}

@@ -42,3 +42,6 @@ data/sample_videos/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Uploaded videos for on-demand analysis
+data/uploads/

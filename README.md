@@ -20,7 +20,7 @@
 - **Video Preprocessing:** OpenCV with adaptive sampling, frame variance obstruction detection, and CLAHE contrast enhancement for low light
 - **Edge Privacy:** Dual-stage face blurring (OpenCV Haar Cascades + upper-body head region blurring) before frame serialization
 - **Backend API:** FastAPI + SQLite with SQLAlchemy ORM (swappable to PostgreSQL)
-- **Monitoring Dashboard:** **React + Vite + Tailwind CSS + Recharts** (chosen for high-throughput compliance visualization, responsive charts, and glassmorphic aesthetics)
+- **Monitoring Dashboard:** **React + Vite + Recharts + three.js (react-three-fiber)** — inspection portal with a 3D scale-model view of each classroom
 - **Packaging:** Docker Compose multi-container architecture (`edge-agent`, `api`, `dashboard`)
 
 ---
@@ -41,6 +41,7 @@ skillsight/
     main.py                    # FastAPI application, REST endpoints
     models.py                  # SQLAlchemy declarative models
     rules.py                   # Discrepancy engine, dynamic scoring, audit trail
+    video_analysis.py          # Upload-a-video analysis: people/chair/equipment counts, 3D layout, heatmap
   dashboard/                   # React + Vite + Tailwind + Recharts frontend
     src/                       # App.jsx, charts, evidence modal, audit notes
   configs/
@@ -143,6 +144,33 @@ docker compose up --build
 - Compliance Dashboard: `http://localhost:3000`
 
 ---
+
+
+## Analyse a recorded video
+
+Open **Analyse footage** in the dashboard and drop in a classroom or workshop recording (MP4, MOV, AVI, MKV, WEBM, up to 500 MB). The API samples the video, runs YOLOv8n + ByteTrack on each sampled frame, and returns:
+
+| Output | How it's computed |
+|---|---|
+| Typical / peak / unique headcount | Median and max people per frame; unique = ByteTrack IDs seen in at least 5% of frames |
+| Chairs, desks, benches, monitors, laptops, bags… | 90th percentile per-frame count (robust to people blocking furniture) |
+| Seat occupancy | Share of detected chairs overlapped by a detected person |
+| 3D room model | Detections from the most representative frame, projected onto an approximate floor plan |
+| Movement heatmap | Where people's feet were across all sampled frames |
+| Evidence frames | Face-blurred with `PrivacyEngine`, detections outlined |
+
+The uploaded file is deleted as soon as processing ends. From the results you can **file the clip as a session** against a centre with the claimed attendance; mismatches raise the usual `ATTENDANCE_OVERREPORT` / `SESSION_EMPTY` alerts plus `SEATING_SHORTFALL`.
+
+API:
+
+```bash
+curl -F file=@classroom.mp4 http://localhost:8000/api/v1/analyze/video        # -> {"job_id": "..."}
+curl http://localhost:8000/api/v1/analyze/jobs/<job_id>                          # poll status / result
+curl -X POST http://localhost:8000/api/v1/analyze/jobs/<job_id>/attach \
+     -H 'Content-Type: application/json' -d '{"centre_id":"TC001","submitted_count":20}'
+```
+
+Tuning: `KD_VIDEO_MAX_FRAMES` (default 160 sampled frames), `KD_VIDEO_MODEL` (default `yolov8n.pt`; `yolov8s.pt` is more accurate on crowded rooms), `KD_MAX_UPLOAD_MB` (default 500).
 
 ## Automated Verification & Test Suite
 
