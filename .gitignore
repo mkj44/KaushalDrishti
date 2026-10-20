@@ -4,6 +4,11 @@ venv/
 env/
 ENV/
 
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
 # Node & Frontend builds
 dashboard/node_modules/
 dashboard/dist/

@@ -69,18 +69,37 @@ skillsight/
 
 ## Quickstart: Running the System
 
-### Option A: Local Native Execution
+### Option A: Local Native Execution (One-Command Setup)
 
-#### 1. Setup Virtual Environment & Dependencies
+#### 1. Setup Environment & Dependencies
+After cloning the repository, run the automated setup script:
+
 ```bash
+# macOS / Linux / Git Bash:
+./setup.sh
+
+# Windows (Command Prompt / PowerShell):
+setup.bat
+```
+
+*(This automatically creates `.env` from `.env.example`, provisions the Python `venv`, installs `requirements.txt`, and runs `npm install` for the dashboard).*
+
+Or manually:
+```bash
+cp .env.example .env
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cd dashboard && npm install && npm run build && cd ..
 ```
 
-#### 2. Start Backend API & Dashboard
-In separate terminals:
+#### 2. Start Central Services
+```bash
+./start_services.sh
+```
+*(This automatically boots the FastAPI backend on port 8000 and the React dashboard on port 3000).*
+
+Alternatively, run in separate terminals:
 ```bash
 # Terminal 1: Start Central API
 PYTHONPATH=. ./venv/bin/uvicorn api.main:app --host 127.0.0.1 --port 8000

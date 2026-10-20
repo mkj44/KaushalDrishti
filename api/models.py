@@ -2,10 +2,17 @@
 SQLAlchemy database models for SkillSight compliance monitoring.
 """
 
+import os
 from datetime import datetime
 from typing import List, Optional
 from sqlalchemy import Column, String, Integer, Float, DateTime, Text, ForeignKey, create_engine
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 Base = declarative_base()
 
@@ -96,8 +103,9 @@ class InventoryItem(Base):
     centre = relationship("Centre", back_populates="inventory")
 
 # Database initialization helper
-DATABASE_URL = "sqlite:///skillsight.db"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///skillsight.db")
+connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+engine = create_engine(DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def init_db():
