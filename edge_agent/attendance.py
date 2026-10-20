@@ -1,5 +1,5 @@
 """
-Attendance estimation and discrepancy detection module for SkillSight edge agent.
+Attendance estimation and discrepancy detection module for KaushalDrishti edge agent.
 
 Aggregates per-frame person detections over a session window:
 - Computes rolling median count, 90th percentile count, and unique ByteTrack track estimate.

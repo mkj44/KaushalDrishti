@@ -1,5 +1,5 @@
 """
-SkillSight Edge Agent CLI Entrypoint.
+KaushalDrishti Edge Agent CLI Entrypoint.
 
 Usage:
   python -m edge_agent --config configs/centre_TC001.yaml --source data/sample_videos/normal.mp4
@@ -21,13 +21,13 @@ from edge_agent.infrastructure import InfrastructureEngine
 from edge_agent.uplink import UplinkManager
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="KaushalDrishit Edge Compliance Agent (कौशल दृष्टि)")
+    parser = argparse.ArgumentParser(description="KaushalDrishti Edge Compliance Agent (कौशल दृष्टि)")
     parser.add_argument("--config", default="configs/centre_TC001.yaml", help="Path to centre configuration YAML")
     parser.add_argument("--source", default=None, help="Video file or RTSP stream URL (overrides config)")
     parser.add_argument("--camera", default="cam1", help="Camera ID to process (default: cam1)")
     parser.add_argument("--session", default="SESS_101", help="Session ID (default: SESS_101)")
     parser.add_argument("--submitted", type=int, default=None, help="Submitted attendance count (or looked up from CSV)")
-    parser.add_argument("--api", default="http://127.0.0.1:8000", help="KaushalDrishit central API base URL")
+    parser.add_argument("--api", default="http://127.0.0.1:8000", help="KaushalDrishti central API base URL")
     parser.add_argument("--mode", choices=["full", "lite", "minimal"], default="full", help="Adaptive bandwidth mode")
     parser.add_argument("--sample-interval", type=float, default=0.2, help="Sampling interval in seconds")
     parser.add_argument("--live", action="store_true", help="Continuous live camera monitoring mode")
@@ -68,7 +68,7 @@ def main():
             submitted_count = 10  # Default fallback
 
     print("=" * 70)
-    print(f"KaushalDrishit Edge Agent: {centre_info['centre_name']} ({centre_id})")
+    print(f"KaushalDrishti Edge Agent: {centre_info['centre_name']} ({centre_id})")
     print(f"Camera: {cam_cfg['name']} ({cam_cfg['id']}) | Source: {video_source}")
     print(f"Session: {args.session} | Submitted Attendance: {submitted_count} | Mode: {args.mode.upper()}")
     print("=" * 70)
@@ -107,7 +107,7 @@ def main():
     infra_alerts = []
     start_time = time.time()
 
-    print(f"\n[KaushalDrishit Edge] Beginning capture loop on '{video_source}'...")
+    print(f"\n[KaushalDrishti Edge] Beginning capture loop on '{video_source}'...")
     if args.live:
         print("[LIVE MODE ACTIVATED] Streaming periodic compliance events to dashboard every 5 sampled frames.")
     if should_show:
@@ -210,11 +210,11 @@ def main():
 
                 # Top status bar (Clean Government Blue, non-neon)
                 cv2.rectangle(preview, (0, 0), (w, 36), (15, 41, 66), -1)
-                bar_text = f"KaushalDrishit Edge Vision | Trainees: {res['trainees_count']} | People: {res['total_persons_in_roi']} | DPDP Face Blur: ACTIVE | Press 'q' to stop"
+                bar_text = f"KaushalDrishti Edge Vision | Trainees: {res['trainees_count']} | People: {res['total_persons_in_roi']} | DPDP Face Blur: ACTIVE | Press 'q' to stop"
                 cv2.putText(preview, bar_text, (10, 23), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
 
                 try:
-                    cv2.imshow("KaushalDrishit Edge - Live Camera (DPDP Act 2023 Compliant)", preview)
+                    cv2.imshow("KaushalDrishti Edge - Live Camera (DPDP Act 2023 Compliant)", preview)
                     key = cv2.waitKey(1) & 0xFF
                     if key == ord('q') or key == 27:
                         print("\n[LIVE MODE] Stop key pressed. Closing live session...")

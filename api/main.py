@@ -1,5 +1,5 @@
 """
-FastAPI Backend Application for KaushalDrishit Compliance Monitoring.
+FastAPI Backend Application for KaushalDrishti Compliance Monitoring.
 
 Exposes REST APIs for:
 - Edge agent uplink ingestion (single & batch store-and-forward).
@@ -30,7 +30,7 @@ from api import video_analysis
 init_db()
 
 app = FastAPI(
-    title="KaushalDrishit Compliance API",
+    title="KaushalDrishti Compliance API",
     version="1.0.0",
     description="Automated Computer Vision Compliance Pipeline for National Skilling Schemes (कौशल दृष्टि)"
 )
@@ -94,7 +94,7 @@ def startup_seed():
                 scheme=c_info.get("scheme", "PMKVY"),
                 district=c_info.get("district", "Raipur"),
                 state=c_info.get("state", "Chhattisgarh"),
-                contact_email=c_info.get("contact_email", "compliance@tc001.skillsight.gov.in"),
+                contact_email=c_info.get("contact_email", "compliance@tc001.kaushaldrishti.gov.in"),
                 compliance_score=100.0
             )
             db.add(centre)
@@ -133,7 +133,7 @@ def startup_seed():
 
 @app.get("/api/v1/health")
 def health_check():
-    return {"status": "healthy", "service": "KaushalDrishit Compliance API", "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "healthy", "service": "KaushalDrishti Compliance API", "timestamp": datetime.utcnow().isoformat()}
 
 @app.post("/api/v1/uplink/event")
 def ingest_event(event: UplinkEvent, db: Session = Depends(get_db)):
@@ -373,7 +373,7 @@ def export_alerts_csv(centre_id: Optional[str] = None, db: Session = Depends(get
         ])
 
     output.seek(0)
-    filename = f"kaushaldrishit_compliance_report_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"kaushaldrishti_compliance_report_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",

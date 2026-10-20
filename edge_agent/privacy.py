@@ -1,5 +1,5 @@
 """
-Privacy-by-Design face blurring and evidence generation module for SkillSight.
+Privacy-by-Design face blurring and evidence generation module for KaushalDrishti.
 
 Key guarantees:
 1. Face blurring happens at the edge BEFORE any frame is stored or transmitted.

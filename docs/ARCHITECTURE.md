@@ -1,12 +1,12 @@
-# SkillSight — System Architecture Specification
+# KaushalDrishti — System Architecture Specification
 
 ## 1. High-Level Architecture Overview
 
-SkillSight is an edge-first compliance and video analytics platform engineered for government skilling schemes (such as PMKVY, DDU-GKY, and state skill missions). It solves two persistent integrity challenges:
+KaushalDrishti is an edge-first compliance and video analytics platform engineered for government skilling schemes (such as PMKVY, DDU-GKY, and state skill missions). It solves two persistent integrity challenges:
 1. **Attendance Inflation**: Centres submitting trainee attendance counts that fail to match actual physical headcount.
 2. **Ghost Infrastructure**: Sanctioned equipment (machinery, workbenches, computers, seating) being removed or remaining inoperable between periodic physical inspections.
 
-SkillSight runs all computer vision inference locally on CPU-friendly edge hardware situated at the training centre. **Raw CCTV video never leaves the training centre.** Only aggregated compliance events and edge-anonymized thumbnails are transmitted over low-bandwidth links to the central monitoring API and dashboard.
+KaushalDrishti runs all computer vision inference locally on CPU-friendly edge hardware situated at the training centre. **Raw CCTV video never leaves the training centre.** Only aggregated compliance events and edge-anonymized thumbnails are transmitted over low-bandwidth links to the central monitoring API and dashboard.
 
 ---
 

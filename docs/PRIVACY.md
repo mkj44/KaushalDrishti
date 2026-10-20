@@ -1,14 +1,14 @@
-# SkillSight — Privacy by Design Specification
+# KaushalDrishti — Privacy by Design Specification
 
 ## 1. Core Privacy Principles
 
-SkillSight is engineered with strict **Privacy-by-Design** principles to comply with India's **Digital Personal Data Protection (DPDP) Act, 2023** and global data privacy standards. The platform enforces aggregate compliance verification rather than individual surveillance.
+KaushalDrishti is engineered with strict **Privacy-by-Design** principles to comply with India's **Digital Personal Data Protection (DPDP) Act, 2023** and global data privacy standards. The platform enforces aggregate compliance verification rather than individual surveillance.
 
 ---
 
 ## 2. Data Governance Matrix
 
-The table below explicitly defines data handling across all stages of the SkillSight pipeline:
+The table below explicitly defines data handling across all stages of the KaushalDrishti pipeline:
 
 | What is Detected | What is Stored | What is Transmitted | What is NEVER Done |
 | :--- | :--- | :--- | :--- |
@@ -46,14 +46,14 @@ To eliminate any risk of unblurred face leakage, `edge_agent/privacy.py` execute
 ```
 
 ### Automated Compliance Unit Test
-SkillSight incorporates an automated unit test in `tests/test_privacy.py` (`test_face_blurring_leaves_zero_detectable_faces`), which runs a face detector across generated evidence thumbnails and asserts **zero detected faces above confidence threshold**.
+KaushalDrishti incorporates an automated unit test in `tests/test_privacy.py` (`test_face_blurring_leaves_zero_detectable_faces`), which runs a face detector across generated evidence thumbnails and asserts **zero detected faces above confidence threshold**.
 
 ---
 
 ## 4. Legal Compliance & The DPDP Act, 2023
 
 1. **Purpose Limitation**:
-   SkillSight processes optical data exclusively for scheme infrastructure compliance and attendance cross-verification under Section 4 of the DPDP Act. It does not construct behavioural profiles or track individual trainee attendance histories.
+   KaushalDrishti processes optical data exclusively for scheme infrastructure compliance and attendance cross-verification under Section 4 of the DPDP Act. It does not construct behavioural profiles or track individual trainee attendance histories.
 2. **Data Minimization (Section 6)**:
    Transmitted signals are restricted to mathematical counts and blurred thumbnails strictly required to verify compliance discrepancies.
 3. **Storage Limitation (Section 8)**:
@@ -68,8 +68,8 @@ SkillSight incorporates an automated unit test in `tests/test_privacy.py` (`test
 > 
 > In rare instances involving alleged financial fraud, ghost beneficiary scams, or criminal forgery, scheme authorities may seek to verify the exact individual identity of specific trainees or instructors.
 > 
-> **SkillSight does not and cannot perform this function.** 
-> Individual identification is strictly out-of-scope for the SkillSight system and architecture. Any legitimate individual verification:
+> **KaushalDrishti does not and cannot perform this function.** 
+> Individual identification is strictly out-of-scope for the KaushalDrishti system and architecture. Any legitimate individual verification:
 > 1. Requires separate legal authorization, judicial warrant, or statutory notices under applicable government scheme bylaws and the **DPDP Act, 2023**.
 > 2. Requires verifiable notice and explicit informed consent from the specific data principal (trainee/instructor).
-> 3. Must be conducted through official manual physical inspections or certified statutory identity systems (e.g. Aadhaar AEPS / biometric terminals), completely independent of SkillSight's passive compliance monitoring.
+> 3. Must be conducted through official manual physical inspections or certified statutory identity systems (e.g. Aadhaar AEPS / biometric terminals), completely independent of KaushalDrishti's passive compliance monitoring.

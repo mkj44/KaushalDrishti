@@ -1,5 +1,5 @@
 """
-Video capture and preprocessing module for SkillSight edge agent.
+Video capture and preprocessing module for KaushalDrishti edge agent.
 
 Supports:
 - RTSP streams and local video files.

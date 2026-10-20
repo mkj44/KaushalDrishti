@@ -1,7 +1,7 @@
-# SkillSight — Accuracy Assessment & Compliance Evaluation Report
+# KaushalDrishti — Accuracy Assessment & Compliance Evaluation Report
 
 ## Executive Summary
-This report presents empirical performance metrics for **SkillSight** evaluated across **7 benchmark compliance scenarios** encompassing normal classrooms, attendance inflation, empty sessions, stolen equipment, unoperated machinery, and poor sensor conditions (low-light and camera obstruction).
+This report presents empirical performance metrics for **KaushalDrishti** evaluated across **7 benchmark compliance scenarios** encompassing normal classrooms, attendance inflation, empty sessions, stolen equipment, unoperated machinery, and poor sensor conditions (low-light and camera obstruction).
 
 All numbers herein are programmatically computed from `eval/evaluate.py` on the verified ground-truth dataset.
 
@@ -65,7 +65,7 @@ Evaluation of rule-based compliance alerts across all test scenarios:
 
 ## 5. Threshold Tuning Trade-Offs & Human-in-the-Loop Safeguards
 
-SkillSight deliberately adopts an **explainable, conservative thresholding strategy**:
+KaushalDrishti deliberately adopts an **explainable, conservative thresholding strategy**:
 
 1. **Minimizing False Positive Rate (FPR = 0.0%)**:
    - Skilling centres must never be unfairly penalized by transient occlusions or temporary student movements.

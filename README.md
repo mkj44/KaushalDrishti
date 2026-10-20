@@ -1,4 +1,4 @@
-# KaushalDrishit (कौशल दृष्टि) — Automated Computer Vision & CCTV Compliance for Training Centres
+# KaushalDrishti (कौशल दृष्टि) — Automated Computer Vision & CCTV Compliance for Training Centres
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![YOLOv8](https://img.shields.io/badge/Detection-YOLOv8n%20%2B%20ByteTrack-blue.svg)](https://github.com/ultralytics/ultralytics)
@@ -6,7 +6,7 @@
 [![Privacy](https://img.shields.io/badge/Privacy-Edge%20Face%20Blurring%20%28DPDP%202023%29-emerald.svg)]()
 [![Bandwidth](https://img.shields.io/badge/Bandwidth-99.98%25%20Reduction-purple.svg)]()
 
-**KaushalDrishit (कौशल दृष्टि)** is an edge-first computer vision compliance auditing system engineered for government skilling schemes (PMKVY, DDU-GKY, State Skill Development Missions). It transforms passive CCTV feeds into real-time compliance signals:
+**KaushalDrishti (कौशल दृष्टि)** is an edge-first computer vision compliance auditing system engineered for government skilling schemes (PMKVY, DDU-GKY, State Skill Development Missions). It transforms passive CCTV feeds into real-time compliance signals:
 1. **Attendance Discrepancies**: Accurately counts physical attendees in classrooms and flags inflated attendance claims.
 2. **Ghost Infrastructure**: Automatically audits sanctioned equipment (workbenches, machinery, seating capacity) using baseline image comparison (SSIM) and apparent operability heuristics.
 3. **Bandwidth & Privacy by Design**: All computer vision runs 100% on the local edge CPU. Raw video never leaves the centre; faces are blurred before storage or transmission, ensuring strict compliance with India's **DPDP Act, 2023**.
@@ -28,7 +28,7 @@
 ## Repository Structure
 
 ```
-skillsight/
+kaushaldrishti/
   edge_agent/                  # Runs at the training centre edge
     capture.py                 # RTSP/file input, adaptive sampling, CLAHE, variance check
     detector.py                # YOLOv8n inference, ByteTrack, classroom ROI polygon filter

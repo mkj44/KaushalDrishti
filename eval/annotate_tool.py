@@ -1,5 +1,5 @@
 """
-Lightweight Ground Truth Annotation and Verification Tool for SkillSight.
+Lightweight Ground Truth Annotation and Verification Tool for KaushalDrishti.
 
 Supports:
 - Generating or updating ground truth annotations for video test clips.
@@ -66,7 +66,7 @@ def update_annotation(
     print(f"Updated annotation for {scenario} in {file_path}")
 
 def main():
-    parser = argparse.ArgumentParser(description="SkillSight Annotation & Ground Truth Tool")
+    parser = argparse.ArgumentParser(description="KaushalDrishti Annotation & Ground Truth Tool")
     parser.add_argument("--verify", action="store_true", help="Audit ground truth dataset")
     parser.add_argument("--path", default=DEFAULT_GROUND_TRUTH_PATH, help="Path to ground truth JSON")
     args = parser.parse_args()
