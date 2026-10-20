@@ -1,12 +1,12 @@
 #!/bin/bash
 # ==============================================================================
-# KaushalDrishit (कौशल दृष्टि) — One-Click Environment Setup Script
+# KaushalDrishti (कौशल दृष्टि) — One-Click Environment Setup Script
 # ==============================================================================
 set -e
 cd "$(dirname "$0")"
 
 echo "=========================================================="
-echo " Setting up KaushalDrishit Compliance System"
+echo " Setting up KaushalDrishti Compliance System"
 echo "=========================================================="
 
 # 1. Initialize .env file
@@ -68,7 +68,7 @@ fi
 
 echo ""
 echo "=========================================================="
-echo " ✅ KaushalDrishit Setup Completed Successfully!"
+echo " ✅ KaushalDrishti Setup Completed Successfully!"
 echo "=========================================================="
 echo "To start services:"
 echo "  ./start_services.sh"

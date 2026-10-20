@@ -1,9 +1,9 @@
 @echo off
 REM ==============================================================================
-REM KaushalDrishit (कौशल दृष्टि) — Windows Environment Setup Script
+REM KaushalDrishti (कौशल दृष्टि) — Windows Environment Setup Script
 REM ==============================================================================
 echo ==========================================================
-echo  Setting up KaushalDrishit Compliance System (Windows)
+echo  Setting up KaushalDrishti Compliance System (Windows)
 echo ==========================================================
 
 REM 1. Initialize .env

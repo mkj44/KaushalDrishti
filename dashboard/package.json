@@ -1,18 +1,22 @@
 {
-  "name": "skillsight-dashboard",
+  "name": "kaushaldrishti-dashboard",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:demo": "VITE_DEMO=1 vite build --base ./ --outDir dist-demo"
   },
   "dependencies": {
+    "@react-three/drei": "^9.114.0",
+    "@react-three/fiber": "^8.17.10",
+    "lucide-react": "^0.378.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "recharts": "^2.12.7",
-    "lucide-react": "^0.378.0"
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",

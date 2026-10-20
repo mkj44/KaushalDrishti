@@ -1,6 +1,7 @@
 # Core Detection & Tracking
 ultralytics>=8.0.0
-opencv-python-headless>=4.8.0
+opencv-python-headless>=4.8.0,<5  # 5.x moved Haar cascades (face blurring) out of the main module
+opencv-python>=4.8.0,<5  # ultralytics depends on this; keep it on 4.x too
 numpy>=1.24.0,<2.0.0
 scikit-image>=0.21.0
 pillow>=10.0.0

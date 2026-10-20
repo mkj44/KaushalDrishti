@@ -1,5 +1,5 @@
 """
-Discrepancy and Compliance Rules Engine for SkillSight API.
+Discrepancy and Compliance Rules Engine for KaushalDrishti API.
 
 Handles:
 - Processing edge observations into auditable alerts.

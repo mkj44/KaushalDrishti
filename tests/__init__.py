@@ -1,1 +1,1 @@
-"""SkillSight Test Suite"""
+"""KaushalDrishti Test Suite"""

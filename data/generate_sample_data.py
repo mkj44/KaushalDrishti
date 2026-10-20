@@ -1,5 +1,5 @@
 """
-Sample Video & Ground Truth Generator for SkillSight Demo
+Sample Video & Ground Truth Generator for KaushalDrishti Demo
 
 Generates deterministic, demo-ready video clips and ground-truth metadata
 for all 7 compliance scenarios:

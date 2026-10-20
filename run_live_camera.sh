@@ -1,5 +1,5 @@
 #!/bin/bash
-# KaushalDrishit (कौशल दृष्टि) — Live Camera Stream & Edge Agent
+# KaushalDrishti (कौशल दृष्टि) — Live Camera Stream & Edge Agent
 set -e
 cd "$(dirname "$0")"
 
@@ -33,7 +33,7 @@ else
 fi
 
 echo "=========================================================="
-echo " Starting KaushalDrishit Edge Agent with Live Camera"
+echo " Starting KaushalDrishti Edge Agent with Live Camera"
 echo "=========================================================="
 echo " - Camera Source: $CAM_SOURCE"
 echo " - Telemetry API: $API_ENDPOINT"

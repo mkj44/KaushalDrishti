@@ -1,5 +1,5 @@
 """
-Unit tests for SkillSight Discrepancy Rules Engine and Alert Lifecycle.
+Unit tests for KaushalDrishti Discrepancy Rules Engine and Alert Lifecycle.
 """
 
 import pytest

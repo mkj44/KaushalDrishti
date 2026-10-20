@@ -1,5 +1,5 @@
 """
-YOLOv8 & ByteTrack object detection and tracking module for SkillSight edge agent.
+YOLOv8 & ByteTrack object detection and tracking module for KaushalDrishti edge agent.
 
 Provides:
 - Person and object detection using Ultralytics YOLOv8.

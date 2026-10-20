@@ -1,10 +1,10 @@
 #!/bin/bash
-# KaushalDrishit (कौशल दृष्टि) — Start Central Backend API and Frontend Dashboard
+# KaushalDrishti (कौशल दृष्टि) — Start Central Backend API and Frontend Dashboard
 set -e
 cd "$(dirname "$0")"
 
 echo "=========================================================="
-echo " Starting KaushalDrishit Central Services"
+echo " Starting KaushalDrishti Central Services"
 echo "=========================================================="
 
 # 0. Ensure .env exists from template if missing
@@ -58,7 +58,7 @@ DASH_PID=$!
 cd ..
 
 echo ""
-echo "KaushalDrishit services are running!"
+echo "KaushalDrishti services are running!"
 echo " - Dashboard : http://localhost:3000"
 echo " - API Docs  : http://localhost:8000/docs"
 echo " - Health    : http://127.0.0.1:8000/api/v1/health"

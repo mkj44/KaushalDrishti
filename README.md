@@ -1,4 +1,4 @@
-# KaushalDrishit (कौशल दृष्टि) — Automated Computer Vision & CCTV Compliance for Training Centres
+# KaushalDrishti (कौशल दृष्टि) — Automated Computer Vision & CCTV Compliance for Training Centres
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![YOLOv8](https://img.shields.io/badge/Detection-YOLOv8n%20%2B%20ByteTrack-blue.svg)](https://github.com/ultralytics/ultralytics)
@@ -6,7 +6,7 @@
 [![Privacy](https://img.shields.io/badge/Privacy-Edge%20Face%20Blurring%20%28DPDP%202023%29-emerald.svg)]()
 [![Bandwidth](https://img.shields.io/badge/Bandwidth-99.98%25%20Reduction-purple.svg)]()
 
-**KaushalDrishit (कौशल दृष्टि)** is an edge-first computer vision compliance auditing system engineered for government skilling schemes (PMKVY, DDU-GKY, State Skill Development Missions). It transforms passive CCTV feeds into real-time compliance signals:
+**KaushalDrishti (कौशल दृष्टि)** is an edge-first computer vision compliance auditing system engineered for government skilling schemes (PMKVY, DDU-GKY, State Skill Development Missions). It transforms passive CCTV feeds into real-time compliance signals:
 1. **Attendance Discrepancies**: Accurately counts physical attendees in classrooms and flags inflated attendance claims.
 2. **Ghost Infrastructure**: Automatically audits sanctioned equipment (workbenches, machinery, seating capacity) using baseline image comparison (SSIM) and apparent operability heuristics.
 3. **Bandwidth & Privacy by Design**: All computer vision runs 100% on the local edge CPU. Raw video never leaves the centre; faces are blurred before storage or transmission, ensuring strict compliance with India's **DPDP Act, 2023**.
@@ -20,7 +20,7 @@
 - **Video Preprocessing:** OpenCV with adaptive sampling, frame variance obstruction detection, and CLAHE contrast enhancement for low light
 - **Edge Privacy:** Dual-stage face blurring (OpenCV Haar Cascades + upper-body head region blurring) before frame serialization
 - **Backend API:** FastAPI + SQLite with SQLAlchemy ORM (swappable to PostgreSQL)
-- **Monitoring Dashboard:** **React + Vite + Tailwind CSS + Recharts** (chosen for high-throughput compliance visualization, responsive charts, and glassmorphic aesthetics)
+- **Monitoring Dashboard:** **React + Vite + Recharts + three.js (react-three-fiber)** — inspection portal with a 3D scale-model view of each classroom
 - **Packaging:** Docker Compose multi-container architecture (`edge-agent`, `api`, `dashboard`)
 
 ---
@@ -28,7 +28,7 @@
 ## Repository Structure
 
 ```
-skillsight/
+kaushaldrishti/
   edge_agent/                  # Runs at the training centre edge
     capture.py                 # RTSP/file input, adaptive sampling, CLAHE, variance check
     detector.py                # YOLOv8n inference, ByteTrack, classroom ROI polygon filter
@@ -41,6 +41,7 @@ skillsight/
     main.py                    # FastAPI application, REST endpoints
     models.py                  # SQLAlchemy declarative models
     rules.py                   # Discrepancy engine, dynamic scoring, audit trail
+    video_analysis.py          # Upload-a-video analysis: people/chair/equipment counts, 3D layout, heatmap
   dashboard/                   # React + Vite + Tailwind + Recharts frontend
     src/                       # App.jsx, charts, evidence modal, audit notes
   configs/
@@ -143,6 +144,33 @@ docker compose up --build
 - Compliance Dashboard: `http://localhost:3000`
 
 ---
+
+
+## Analyse a recorded video
+
+Open **Analyse footage** in the dashboard and drop in a classroom or workshop recording (MP4, MOV, AVI, MKV, WEBM, up to 500 MB). The API samples the video, runs YOLOv8n + ByteTrack on each sampled frame, and returns:
+
+| Output | How it's computed |
+|---|---|
+| Typical / peak / unique headcount | Median and max people per frame; unique = ByteTrack IDs seen in at least 5% of frames |
+| Chairs, desks, benches, monitors, laptops, bags… | 90th percentile per-frame count (robust to people blocking furniture) |
+| Seat occupancy | Share of detected chairs overlapped by a detected person |
+| 3D room model | Detections from the most representative frame, projected onto an approximate floor plan |
+| Movement heatmap | Where people's feet were across all sampled frames |
+| Evidence frames | Face-blurred with `PrivacyEngine`, detections outlined |
+
+The uploaded file is deleted as soon as processing ends. From the results you can **file the clip as a session** against a centre with the claimed attendance; mismatches raise the usual `ATTENDANCE_OVERREPORT` / `SESSION_EMPTY` alerts plus `SEATING_SHORTFALL`.
+
+API:
+
+```bash
+curl -F file=@classroom.mp4 http://localhost:8000/api/v1/analyze/video        # -> {"job_id": "..."}
+curl http://localhost:8000/api/v1/analyze/jobs/<job_id>                          # poll status / result
+curl -X POST http://localhost:8000/api/v1/analyze/jobs/<job_id>/attach \
+     -H 'Content-Type: application/json' -d '{"centre_id":"TC001","submitted_count":20}'
+```
+
+Tuning: `KD_VIDEO_MAX_FRAMES` (default 160 sampled frames), `KD_VIDEO_MODEL` (default `yolov8n.pt`; `yolov8s.pt` is more accurate on crowded rooms), `KD_MAX_UPLOAD_MB` (default 500).
 
 ## Automated Verification & Test Suite
 

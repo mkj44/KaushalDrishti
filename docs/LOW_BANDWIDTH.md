@@ -1,7 +1,7 @@
-# SkillSight — Low-Bandwidth Edge Deployment & Bandwidth Report
+# KaushalDrishti — Low-Bandwidth Edge Deployment & Bandwidth Report
 
 ## Overview
-SkillSight is architected from the ground up for rural skilling centres operating on intermittent 2G, 3G, or capped 4G cellular links. All computer vision inference (YOLOv8n object detection, ByteTrack session tracking, and face blurring) executes **100% locally on the edge device**. Raw CCTV video feeds never leave the training centre premises.
+KaushalDrishti is architected from the ground up for rural skilling centres operating on intermittent 2G, 3G, or capped 4G cellular links. All computer vision inference (YOLOv8n object detection, ByteTrack session tracking, and face blurring) executes **100% locally on the edge device**. Raw CCTV video feeds never leave the training centre premises.
 
 ---
 
@@ -12,9 +12,9 @@ The table below details empirical measurements taken on live serialized payloads
 | Operational Mode | Contents Transmitted | Payload / Session | Daily Bandwidth (1 Cam, 4 SESS) | Monthly Bandwidth (4 Cams, 30 Days) |
 | :--- | :--- | :--- | :--- | :--- |
 | **Traditional Raw RTSP** | Continuous 720p H.264 stream | ~1.35 GB / session | **5,400,000 KB (5.4 GB)** | **648 GB** |
-| **SkillSight FULL** | JSON compliance events + up to 3 WebP thumbnails (320px) | 1.99 KB | **7.95 KB (0.01 MB)** | **0.93 MB** |
-| **SkillSight LITE** | JSON compliance events + 1 thumbnail for high-severity alerts | 1.00 KB | **4.01 KB (0.00 MB)** | **0.47 MB** |
-| **SkillSight MINIMAL** | Aggregated JSON session digest (zero thumbnails) | 0.51 KB | **2.05 KB** | **246.09 KB (0.24 MB)** |
+| **KaushalDrishti FULL** | JSON compliance events + up to 3 WebP thumbnails (320px) | 1.99 KB | **7.95 KB (0.01 MB)** | **0.93 MB** |
+| **KaushalDrishti LITE** | JSON compliance events + 1 thumbnail for high-severity alerts | 1.00 KB | **4.01 KB (0.00 MB)** | **0.47 MB** |
+| **KaushalDrishti MINIMAL** | Aggregated JSON session digest (zero thumbnails) | 0.51 KB | **2.05 KB** | **246.09 KB (0.24 MB)** |
 | **SMS / USSD Stub** | GSM-encoded text summary (`SS|TC001|SS_101|S:25|E:4|A:ATTENDANCE`) | **37 bytes** | **< 1 KB** | **< 20 KB** |
 
 ### Bandwidth Reduction
@@ -34,7 +34,7 @@ The table below details empirical measurements taken on live serialized payloads
 ---
 
 ## Low-Quality Sensor & Poor Illumination Handling
-SkillSight handles budget 360p/480p sensors and low-light workshop environments:
+KaushalDrishti handles budget 360p/480p sensors and low-light workshop environments:
 1. **Adaptive CLAHE (Contrast Limited Adaptive Histogram Equalization)**:
    - When a camera's average grayscale brightness drops below 50.0, CLAHE is automatically applied on the L-channel in LAB color space.
    - Enhances contrast around silhouettes without amplifying high-frequency noise or color artifacts.

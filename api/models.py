@@ -1,5 +1,5 @@
 """
-SQLAlchemy database models for SkillSight compliance monitoring.
+SQLAlchemy database models for KaushalDrishti compliance monitoring.
 """
 
 import os

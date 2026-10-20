@@ -1,5 +1,5 @@
 """
-Infrastructure compliance, zone inventory tracking, and apparent operability heuristics for SkillSight.
+Infrastructure compliance, zone inventory tracking, and apparent operability heuristics for KaushalDrishti.
 
 Capabilities:
 1. Zone-based presence checks:

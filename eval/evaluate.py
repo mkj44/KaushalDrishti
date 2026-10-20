@@ -1,5 +1,5 @@
 """
-SkillSight Comprehensive Accuracy & Compliance Evaluation Benchmark.
+KaushalDrishti Comprehensive Accuracy & Compliance Evaluation Benchmark.
 
 Evaluates pipeline performance on the demo dataset across all 7 scenarios:
 - Headcount Metrics: MAE, MAPE, % within +-2 persons.
@@ -23,7 +23,7 @@ from edge_agent.infrastructure import InfrastructureEngine
 
 def run_evaluation(output_md: str = "docs/EVALUATION.md"):
     print("=" * 75)
-    print("SkillSight Pipeline Accuracy & Discrepancy Evaluation")
+    print("KaushalDrishti Pipeline Accuracy & Discrepancy Evaluation")
     print("=" * 75)
 
     with open("configs/centre_TC001.yaml", "r") as f:
@@ -199,10 +199,10 @@ def run_evaluation(output_md: str = "docs/EVALUATION.md"):
         )
 
     # Generate Markdown Report
-    doc = f"""# SkillSight — Accuracy Assessment & Compliance Evaluation Report
+    doc = f"""# KaushalDrishti — Accuracy Assessment & Compliance Evaluation Report
 
 ## Executive Summary
-This report presents empirical performance metrics for **SkillSight** evaluated across **7 benchmark compliance scenarios** encompassing normal classrooms, attendance inflation, empty sessions, stolen equipment, unoperated machinery, and poor sensor conditions (low-light and camera obstruction).
+This report presents empirical performance metrics for **KaushalDrishti** evaluated across **7 benchmark compliance scenarios** encompassing normal classrooms, attendance inflation, empty sessions, stolen equipment, unoperated machinery, and poor sensor conditions (low-light and camera obstruction).
 
 All numbers herein are programmatically computed from `eval/evaluate.py` on the verified ground-truth dataset.
 
@@ -262,7 +262,7 @@ Evaluation of rule-based compliance alerts across all test scenarios:
 
 ## 5. Threshold Tuning Trade-Offs & Human-in-the-Loop Safeguards
 
-SkillSight deliberately adopts an **explainable, conservative thresholding strategy**:
+KaushalDrishti deliberately adopts an **explainable, conservative thresholding strategy**:
 
 1. **Minimizing False Positive Rate (FPR = 0.0%)**:
    - Skilling centres must never be unfairly penalized by transient occlusions or temporary student movements.

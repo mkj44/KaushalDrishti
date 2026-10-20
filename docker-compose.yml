@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.api
-    container_name: skillsight-api
+    container_name: kaushaldrishti-api
     ports:
       - "8000:8000"
     volumes:
@@ -22,7 +22,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dashboard
-    container_name: skillsight-dashboard
+    container_name: kaushaldrishti-dashboard
     ports:
       - "3000:3000"
     depends_on:
@@ -33,7 +33,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.edge
-    container_name: skillsight-edge-agent
+    container_name: kaushaldrishti-edge-agent
     depends_on:
       api:
         condition: service_healthy

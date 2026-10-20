@@ -1,5 +1,5 @@
 """
-Edge Uplink, Adaptive Bandwidth Mode, and SQLite Offline Store-and-Forward Queue for SkillSight.
+Edge Uplink, Adaptive Bandwidth Mode, and SQLite Offline Store-and-Forward Queue for KaushalDrishti.
 
 Guarantees:
 1. Resilient transmission over intermittent/rural 2G/3G/4G connectivity.
