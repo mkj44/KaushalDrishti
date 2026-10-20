@@ -1,6 +1,6 @@
-# SkillSight — Live Demonstration & Presentation Playbook
+# KaushalDrishit (कौशल दृष्टि) — Live Demonstration & Presentation Playbook
 
-A step-by-step guide for presenting **SkillSight** to professors, evaluators, and scheme inspection officials.
+A step-by-step guide for presenting **KaushalDrishit** to professors, evaluators, and scheme inspection officials.
 
 ---
 
@@ -37,7 +37,7 @@ cd dashboard && npm run dev -- --host 127.0.0.1 --port 3000
 > 
 > *Raw CCTV video streaming fails because rural centres lack high-speed internet, manual review is impossible across thousands of centres, and transmitting unblurred footage violates India's **DPDP Act, 2023**.*
 > 
-> *We built **SkillSight**: an edge computer vision pipeline running on a standard CPU. It blurs faces at the edge, calculates actual headcount, audits machine operability, and sends compliance signals using **under 8 KB of data per day**."*
+> *We built **KaushalDrishit (कौशल दृष्टि)**: an edge computer vision pipeline running on a standard CPU. It blurs faces at the edge, calculates actual headcount, audits machine operability, and sends compliance signals using **under 8 KB of data per day**."*
 
 ---
 
@@ -72,7 +72,7 @@ PYTHONPATH=. ./venv/bin/python -m edge_agent --source data/sample_videos/machine
    - *"Workbench WB-02 was removed. We run Structural Similarity (SSIM) against baseline snapshots of the room. When the delta persists across ≥3 checks, it flags `ITEM_MISSING` and turns red."*
 2. **Apparent Operability Check**:
    - Point to the **CNC Precision Lathe (LATHE-01)** card:
-   - *"Centres often keep machines as display props. SkillSight checks two signals: operator motion in the safety zone via frame differencing AND power indicator LED color in a sub-ROI. Because this lathe has 0 motion and a red indicator, it flags `EQUIPMENT_POSSIBLY_NONFUNCTIONAL`."*
+   - *"Centres often keep machines as display props. KaushalDrishit checks two signals: operator motion in the safety zone via frame differencing AND power indicator LED color in a sub-ROI. Because this lathe has 0 motion and a red indicator, it flags `EQUIPMENT_POSSIBLY_NONFUNCTIONAL`."*
 
 ---
 
@@ -89,14 +89,14 @@ On the dashboard, click the **"Evidence"** button on any alert card.
 3. **Human-in-the-Loop Review**:
    - Type a note: `"District Inspector verified roster discrepancy with centre director."`
    - Click **"Acknowledge Discrepancy"** to demonstrate reviewer workflow.
-   - Switch role to **"Admin"** in the top right, add a note, and click **"Resolve & Close Alert"** to show the compliance index update.
+   - Switch role to **"Directorate"** in the top right, add a note, and click **"Resolve & Close Alert"** to show the compliance index update.
 
 ---
 
 ### [4:00 – 5:00] Demo 4: Live Laptop Camera (The "Showstopper")
 Run the live webcam command:
 ```bash
-PYTHONPATH=. ./venv/bin/python -m edge_agent --source 0 --live
+./run_live_camera.sh
 ```
 
 **What to point out live:**
@@ -104,8 +104,8 @@ PYTHONPATH=. ./venv/bin/python -m edge_agent --source 0 --live
    - *"The edge agent is now processing my laptop camera in real time."*
    - Show the terminal logs: `[FRAME 005] People in ROI: 1 | Trainees: 1 | Privacy Blurred: YES`.
 2. Look at the dashboard:
-   - Show the real-time update arriving at `http://localhost:3000`.
-3. Press `Ctrl + C` in the terminal to end the live test.
+   - Show the real-time update arriving at `http://localhost:3000` with the live preview card.
+3. Press `q` in the camera window or `Ctrl + C` in the terminal to end the live test.
 4. Click **"Ministry Export (CSV)"** in the top right of the dashboard:
    - *"With one click, inspection officials download a certified audit spreadsheet for ministry records."*
 
@@ -127,7 +127,7 @@ PYTHONPATH=. ./venv/bin/python -m edge_agent --source 0 --live
 
 ### Q4: "Why did you avoid facial recognition for attendance?"
 > **Answer:**  
-> *"Sections 4 and 6 of India's **DPDP Act, 2023** mandate purpose limitation and data minimization. Government skilling audits only require aggregate headcount verification, not biometric profiling of citizens. SkillSight eliminates attendance fraud while strictly preserving trainee privacy."*
+> *"Sections 4 and 6 of India's **DPDP Act, 2023** mandate purpose limitation and data minimization. Government skilling audits only require aggregate headcount verification, not biometric profiling of citizens. KaushalDrishit eliminates attendance fraud while strictly preserving trainee privacy."*
 
 ---
 

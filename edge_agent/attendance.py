@@ -75,8 +75,11 @@ class SessionAttendanceAggregator:
                         self.unique_track_ids.add(d.track_id)
 
         # Retain up to 3 evidence thumbnails across the session (e.g. beginning, middle, peak)
-        if thumbnail_bytes and len(self.evidence_thumbnails) < 3:
-            self.evidence_thumbnails.append(base64.b64encode(thumbnail_bytes).decode("utf-8"))
+        if thumbnail_bytes:
+            b64_str = base64.b64encode(thumbnail_bytes).decode("utf-8")
+            self.latest_thumbnail = b64_str
+            if len(self.evidence_thumbnails) < 3:
+                self.evidence_thumbnails.append(b64_str)
 
     def compute_session_headcount(self) -> Dict[str, Any]:
         """Compute statistical estimates for the session."""
@@ -166,6 +169,11 @@ class SessionAttendanceAggregator:
                     "message": f"Visual headcount ({estimated}) exceeds submitted attendance ({submitted_count}). Informational flag."
                 })
 
+        thumbs = list(self.evidence_thumbnails)
+        if hasattr(self, "latest_thumbnail") and self.latest_thumbnail:
+            if not thumbs or thumbs[-1] != self.latest_thumbnail:
+                thumbs = thumbs[:2] + [self.latest_thumbnail]
+
         return {
             "centre_id": self.centre_id,
             "camera_id": self.camera_id,
@@ -178,5 +186,5 @@ class SessionAttendanceAggregator:
             "confidence": metrics["confidence"],
             "frames_used": metrics["frames_used"],
             "flags": flags,
-            "thumbnails": self.evidence_thumbnails
+            "thumbnails": thumbs
         }

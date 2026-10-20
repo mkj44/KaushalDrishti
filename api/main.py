@@ -1,5 +1,5 @@
 """
-FastAPI Backend Application for SkillSight Compliance Monitoring.
+FastAPI Backend Application for KaushalDrishit Compliance Monitoring.
 
 Exposes REST APIs for:
 - Edge agent uplink ingestion (single & batch store-and-forward).
@@ -27,9 +27,9 @@ from api.rules import DiscrepancyEngine
 init_db()
 
 app = FastAPI(
-    title="SkillSight Compliance API",
+    title="KaushalDrishit Compliance API",
     version="1.0.0",
-    description="Automated Computer Vision Compliance Pipeline for Skilling Schemes"
+    description="Automated Computer Vision Compliance Pipeline for National Skilling Schemes (कौशल दृष्टि)"
 )
 
 # Enable CORS for Vite React dashboard
@@ -47,6 +47,9 @@ def get_db():
         yield db
     finally:
         db.close()
+
+# In-memory store for real-time edge camera feeds
+LATEST_LIVE_FEEDS: Dict[str, Any] = {}
 
 # Pydantic Schemas
 class UplinkEvent(BaseModel):
@@ -127,13 +130,33 @@ def startup_seed():
 
 @app.get("/api/v1/health")
 def health_check():
-    return {"status": "healthy", "service": "SkillSight Compliance API", "timestamp": datetime.utcnow().isoformat()}
+    return {"status": "healthy", "service": "KaushalDrishit Compliance API", "timestamp": datetime.utcnow().isoformat()}
 
 @app.post("/api/v1/uplink/event")
 def ingest_event(event: UplinkEvent, db: Session = Depends(get_db)):
     """Ingest real-time event from edge agent."""
+    if event.thumbnails:
+        LATEST_LIVE_FEEDS[f"{event.centre_id}_{event.camera_id}"] = {
+            "active": True,
+            "centre_id": event.centre_id,
+            "camera_id": event.camera_id,
+            "session_id": event.session_id,
+            "image": event.thumbnails[-1],
+            "estimated_count": event.estimated_count,
+            "submitted_count": event.submitted_count,
+            "confidence": event.confidence,
+            "updated_at": datetime.utcnow().isoformat()
+        }
     res = DiscrepancyEngine.process_edge_event(db, event.dict())
     return {"status": "success", "result": res}
+
+@app.get("/api/v1/cameras/{centre_id}/{camera_id}/live")
+def get_live_camera(centre_id: str, camera_id: str):
+    """Retrieve the most recent anonymized frame and real-time metrics for a camera."""
+    key = f"{centre_id}_{camera_id}"
+    if key in LATEST_LIVE_FEEDS:
+        return LATEST_LIVE_FEEDS[key]
+    return {"active": False, "image": None}
 
 @app.post("/api/v1/uplink/batch")
 def ingest_batch(batch: BatchUplink, db: Session = Depends(get_db)):
@@ -230,7 +253,8 @@ def get_centre_detail(centre_id: str, db: Session = Depends(get_db)):
             "session_id": a.session_id,
             "has_thumbnails": len(json.loads(a.thumbnails_json or "[]")) > 0,
             "created_at": a.created_at.isoformat()
-        } for a in alerts]
+        } for a in alerts],
+        "live_feed": LATEST_LIVE_FEEDS.get(f"{centre_id}_cam1") or LATEST_LIVE_FEEDS.get(f"{centre_id}_cam2") or next((v for k, v in LATEST_LIVE_FEEDS.items() if k.startswith(centre_id)), None)
     }
 
 @app.get("/api/v1/alerts")
@@ -346,7 +370,7 @@ def export_alerts_csv(centre_id: Optional[str] = None, db: Session = Depends(get
         ])
 
     output.seek(0)
-    filename = f"skillsight_compliance_report_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"kaushaldrishit_compliance_report_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
     return StreamingResponse(
         iter([output.getvalue()]),
         media_type="text/csv",
