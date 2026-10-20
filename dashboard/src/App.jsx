@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { LayoutGrid, ClipboardCheck, Film, Download } from 'lucide-react';
+import { LayoutGrid, ClipboardCheck, Film, Download, Radio } from 'lucide-react';
 import Overview from './pages/Overview.jsx';
 import Inspection from './pages/Inspection.jsx';
 import Analyse from './pages/Analyse.jsx';
+import Live from './pages/Live.jsx';
 import AlertModal from './components/AlertModal.jsx';
 
 const DEMO = Boolean(import.meta.env.VITE_DEMO);
@@ -10,8 +11,9 @@ const DEMO = Boolean(import.meta.env.VITE_DEMO);
 const PAGES = [
   { id: 'overview', label: 'Centres', icon: LayoutGrid },
   { id: 'inspection', label: 'Inspection', icon: ClipboardCheck },
+  { id: 'live', label: 'Live camera', icon: Radio },
   { id: 'analyse', label: 'Analyse footage', icon: Film },
-];
+].filter((p) => !(DEMO && p.id === 'live'));
 
 export default function App() {
   const [page, setPage] = useState(() => (location.hash.replace('#', '') || 'overview'));
@@ -21,6 +23,7 @@ export default function App() {
   const [centreData, setCentreData] = useState(null);
   const [alertId, setAlertId] = useState(null);
   const [apiDown, setApiDown] = useState(false);
+  const [openJob, setOpenJob] = useState(null);
 
   const go = (id) => { setPage(id); history.replaceState(null, '', `#${id}`); window.scrollTo({ top: 0 }); };
 
@@ -98,7 +101,8 @@ export default function App() {
         {page === 'inspection' && (
           <Inspection centreData={centreData} centres={centres} selectedId={selectedId} onSelect={setSelectedId} onOpenAlert={setAlertId} onAnalyse={() => go('analyse')} />
         )}
-        {page === 'analyse' && <Analyse centres={centres} onFiled={(id) => { refresh(); openCentre(id); }} />}
+        {page === 'live' && !DEMO && <Live centres={centres} onFinished={(jobId) => { setOpenJob(jobId); go('analyse'); }} />}
+        {page === 'analyse' && <Analyse centres={centres} initialJobId={openJob} onFiled={(id) => { refresh(); openCentre(id); }} />}
       </main>
 
       {alertId && <AlertModal alertId={alertId} role={role} onClose={() => setAlertId(null)} onChanged={refresh} />}

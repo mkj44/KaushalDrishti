@@ -54,7 +54,8 @@ class PrivacyEngine:
     def anonymize_frame(
         self,
         frame: np.ndarray,
-        person_boxes: Optional[List[List[int]]] = None
+        person_boxes: Optional[List[List[int]]] = None,
+        detect_width: Optional[int] = None
     ) -> np.ndarray:
         """
         Blur all faces and head regions in the frame before storage or transmission.
@@ -62,21 +63,29 @@ class PrivacyEngine:
         Args:
             frame: Raw BGR input frame.
             person_boxes: Optional list of [x1, y1, x2, y2] from YOLO person detector.
+            detect_width: Optional width to run the face cascades at (faster for live
+                video). Detected faces are mapped back and blurred at full resolution;
+                person head regions are always blurred regardless.
 
         Returns:
             Anonymized copy of the frame.
         """
         anonymized = frame.copy()
         gray = cv2.cvtColor(anonymized, cv2.COLOR_BGR2GRAY)
+        scale = 1.0
+        if detect_width and gray.shape[1] > detect_width:
+            scale = gray.shape[1] / detect_width
+            gray = cv2.resize(gray, (detect_width, int(gray.shape[0] / scale)), interpolation=cv2.INTER_AREA)
 
         # 1. Detect faces using frontal face cascade
         faces = self.face_cascade.detectMultiScale(
             gray,
             scaleFactor=1.1,
             minNeighbors=4,
-            minSize=(24, 24)
+            minSize=(16, 16) if scale > 1 else (24, 24)
         )
         for (fx, fy, fw, fh) in faces:
+            fx, fy, fw, fh = (int(v * scale) for v in (fx, fy, fw, fh))
             # Expand face box slightly for comprehensive coverage
             pad_x = int(fw * 0.15)
             pad_y = int(fh * 0.15)
@@ -87,9 +96,10 @@ class PrivacyEngine:
             gray,
             scaleFactor=1.1,
             minNeighbors=4,
-            minSize=(24, 24)
+            minSize=(16, 16) if scale > 1 else (24, 24)
         )
         for (px, py, pw, ph) in profiles:
+            px, py, pw, ph = (int(v * scale) for v in (px, py, pw, ph))
             self.blur_roi(anonymized, px, py, px + pw, py + ph)
 
         # 3. Fallback: Always blur the top 25% head region of every detected person box

@@ -25,6 +25,19 @@ const prefersReducedMotion = () =>
 
 /* ------------------------------------------------------------------- pieces */
 
+/** Live mode: glide toward the latest tracked position instead of jumping. */
+function Mover({ to, children }) {
+  const ref = useRef();
+  const instant = useMemo(prefersReducedMotion, []);
+  useFrame((_, dt) => {
+    if (!ref.current) return;
+    const k = instant ? 1 : 1 - Math.exp(-dt * 8);
+    ref.current.position.x += (to[0] - ref.current.position.x) * k;
+    ref.current.position.z += (to[1] - ref.current.position.z) * k;
+  });
+  return <group ref={ref} position={[to[0], 0, to[1]]}>{children}</group>;
+}
+
 function DropIn({ delay = 0, children, ...props }) {
   const ref = useRef();
   const start = useRef(null);
@@ -225,7 +238,7 @@ function FitCamera({ padding = 0.82 }) {
 
 /* -------------------------------------------------------------------- scene */
 
-export default function Room3D({ items = [], heatmap = null, rawItems = null, scanning = false, autoRotate = true, showHeat = true, label }) {
+export default function Room3D({ items = [], heatmap = null, rawItems = null, scanning = false, autoRotate = true, showHeat = true, live = false, label }) {
   const reduced = useMemo(prefersReducedMotion, []);
   const occupiedChairs = useMemo(() => {
     const people = items.filter((i) => i.category === 'person' && i.seated);
@@ -244,7 +257,12 @@ export default function Room3D({ items = [], heatmap = null, rawItems = null, sc
 
       <Shell />
       {showHeat && heatmap && <Heatmap heatmap={heatmap} items={rawItems} />}
-      {items.map((it, i) => (
+      {live && items.map((it, i) => (
+        <Mover key={it.key || `${it.category}-${i}`} to={it.pos}>
+          <Item it={it} occupied={occupiedChairs.has(i)} />
+        </Mover>
+      ))}
+      {!live && items.map((it, i) => (
         <DropIn key={`${it.category}-${i}-${it.pos[0]}-${it.pos[1]}`} delay={0.15 + i * 0.025} position={[it.pos[0], 0, it.pos[1]]}>
           <Item it={it} occupied={occupiedChairs.has(i)} />
         </DropIn>

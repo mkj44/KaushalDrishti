@@ -42,6 +42,7 @@ kaushaldrishti/
     models.py                  # SQLAlchemy declarative models
     rules.py                   # Discrepancy engine, dynamic scoring, audit trail
     video_analysis.py          # Upload-a-video analysis: people/chair/equipment counts, 3D layout, heatmap
+    live.py                    # Real-time camera sessions (webcam, CCTV/RTSP, sample-as-live)
   dashboard/                   # React + Vite + Tailwind + Recharts frontend
     src/                       # App.jsx, charts, evidence modal, audit notes
   configs/
@@ -145,6 +146,22 @@ docker compose up --build
 
 ---
 
+
+## Live camera (real time)
+
+Open **Live camera** in the dashboard, pick a source and press **Start live analysis**. Counts, a face-blurred camera view and the 3D room update several times a second (up to `KD_LIVE_FPS`, default 6), and tracked people glide around the room model as they move.
+
+| Source | How it works |
+|---|---|
+| This computer's camera | The browser captures the webcam and sends frames to the API. Works at `http://localhost:3000`; browsers only allow camera access on localhost or HTTPS. |
+| Camera number or CCTV stream | The API opens it itself: `0` for the server's built-in webcam, or an `rtsp://` / `http://` stream address. |
+| Sample clip as a live feed | Loops one of `data/sample_videos/` at its own frame rate, for demos without a camera. |
+
+While a session runs, the chosen centre's Inspection page shows the live feed. **Stop and see summary** turns the session into a normal analysis result that can be filed against a centre. Nothing is recorded; only counts and a few blurred stills are kept.
+
+API: `POST /api/v1/live/start` `{"mode": "server" | "push", "source": "0", "centre_id": "TC001"}`, `POST /api/v1/live/frame` (JPEG body, push mode), `GET /api/v1/live/state`, `POST /api/v1/live/stop`.
+
+For permanent, unattended monitoring at a centre, use the edge agent instead (`python -m edge_agent --source 0 --live`), which uploads only compliance events.
 
 ## Analyse a recorded video
 

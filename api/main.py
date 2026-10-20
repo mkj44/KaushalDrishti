@@ -25,6 +25,8 @@ from sqlalchemy.orm import Session
 from api.models import init_db, SessionLocal, Centre, Camera, SessionRecord, Alert, InventoryItem
 from api.rules import DiscrepancyEngine
 from api import video_analysis
+from api import live
+from fastapi import Request
 
 # Initialize database tables
 init_db()
@@ -473,3 +475,67 @@ def attach_analysis_to_centre(job_id: str, req: AttachRequest, db: Session = Dep
     }
     res = DiscrepancyEngine.process_edge_event(db, event)
     return {"status": "success", "session_id": session_id, "flags": [f["rule"] for f in flags], "result": res}
+
+
+# ---------------------------------------------------------------------------
+# Real-time camera analysis
+# ---------------------------------------------------------------------------
+
+class LiveStartRequest(BaseModel):
+    mode: str = Field("server", pattern="^(server|push)$", description="server: API reads the source; push: browser sends frames")
+    source: str = Field("0", description="Camera number, rtsp:// / http:// stream, or a sample clip name")
+    centre_id: str = "TC001"
+    camera_id: str = "live"
+
+
+def _publish_live(update: Dict[str, Any]):
+    LATEST_LIVE_FEEDS[f"{update['centre_id']}_{update['camera_id']}"] = update
+
+
+@app.get("/api/v1/live/sources")
+def live_sources():
+    return {"samples": live.list_samples()}
+
+
+@app.post("/api/v1/live/start")
+def live_start(req: LiveStartRequest):
+    try:
+        session = live.start(req.mode, req.source if req.mode == "server" else "Browser camera",
+                             req.centre_id, req.camera_id, on_update=_publish_live)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return session.snapshot()
+
+
+@app.post("/api/v1/live/frame")
+async def live_frame(request: Request):
+    """Browser-camera mode: body is one JPEG frame."""
+    body = await request.body()
+    if len(body) > 8 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Frame is too large; send at most 1280px wide JPEGs.")
+    try:
+        import asyncio
+        session = await asyncio.to_thread(live.push_frame, body)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return session.snapshot()
+
+
+@app.get("/api/v1/live/state")
+def live_state():
+    s = live.current()
+    if not s:
+        return {"active": False}
+    return s.snapshot()
+
+
+@app.post("/api/v1/live/stop")
+def live_stop():
+    s = live.current()
+    key = f"{s.centre_id}_{s.camera_id}" if s else None
+    job_id = live.stop()
+    if key:
+        LATEST_LIVE_FEEDS.pop(key, None)
+    return {"stopped": True, "job_id": job_id}

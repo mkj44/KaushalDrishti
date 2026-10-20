@@ -10,7 +10,7 @@ const OBJ_COLOURS = { person: 'var(--measured)', chair: 'var(--verified)', table
 const INSIGHT_ICON = { warn: AlertTriangle, info: Info, ok: CheckCircle2 };
 const ACCEPT = '.mp4,.mov,.avi,.mkv,.webm,.m4v,video/*';
 
-export default function Analyse({ centres, onFiled }) {
+export default function Analyse({ centres, onFiled, initialJobId }) {
   const [phase, setPhase] = useState('idle'); // idle | uploading | processing | done | failed
   const [file, setFile] = useState(null);
   const [uploadPct, setUploadPct] = useState(0);
@@ -22,7 +22,7 @@ export default function Analyse({ centres, onFiled }) {
   const inputRef = useRef();
 
   const loadHistory = () => fetch('/api/v1/analyze/jobs').then((r) => r.json()).then((d) => setHistory(d.jobs || [])).catch(() => {});
-  useEffect(() => { loadHistory(); }, []);
+  useEffect(() => { loadHistory(); if (initialJobId) openPast(initialJobId); }, [initialJobId]);
 
   // poll the job while it runs
   useEffect(() => {

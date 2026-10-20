@@ -104,6 +104,17 @@ def list_jobs(limit: int = 20) -> List[Dict[str, Any]]:
         return out
 
 
+def register_completed_job(filename: str, result: Dict[str, Any], options: Optional[Dict[str, Any]] = None) -> str:
+    """Store an already-computed result (e.g. a finished live session) as a completed job."""
+    job_id = uuid.uuid4().hex[:12]
+    with _JOBS_LOCK:
+        _JOBS[job_id] = {
+            "id": job_id, "filename": filename, "status": "completed", "stage": "Done", "progress": 1.0,
+            "created_at": datetime.utcnow().isoformat(), "options": options or {}, "result": result, "error": None,
+        }
+    return job_id
+
+
 def _update(job_id: str, **fields):
     with _JOBS_LOCK:
         if job_id in _JOBS:
