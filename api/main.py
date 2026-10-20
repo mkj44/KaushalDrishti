@@ -29,7 +29,7 @@ init_db()
 app = FastAPI(
     title="SkillSight Compliance API",
     version="1.0.0",
-    description="Automated AI Video Analytics Compliance Pipeline for Skilling Schemes"
+    description="Automated Computer Vision Compliance Pipeline for Skilling Schemes"
 )
 
 # Enable CORS for Vite React dashboard

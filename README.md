@@ -1,4 +1,4 @@
-# SkillSight — AI Video Analytics for Skilling Centre Compliance
+# SkillSight — Automated Computer Vision & CCTV Compliance for Training Centres
 
 [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
 [![YOLOv8](https://img.shields.io/badge/Detection-YOLOv8n%20%2B%20ByteTrack-blue.svg)](https://github.com/ultralytics/ultralytics)
@@ -6,7 +6,7 @@
 [![Privacy](https://img.shields.io/badge/Privacy-Edge%20Face%20Blurring%20%28DPDP%202023%29-emerald.svg)]()
 [![Bandwidth](https://img.shields.io/badge/Bandwidth-99.98%25%20Reduction-purple.svg)]()
 
-SkillSight is an edge-first AI compliance auditing system engineered for government skilling schemes (PMKVY, DDU-GKY, State Skill Development Missions). It transforms passive CCTV feeds into real-time compliance signals:
+SkillSight is an edge-first computer vision compliance auditing system engineered for government skilling schemes (PMKVY, DDU-GKY, State Skill Development Missions). It transforms passive CCTV feeds into real-time compliance signals:
 1. **Attendance Discrepancies**: Accurately counts physical attendees in classrooms and flags inflated attendance claims.
 2. **Ghost Infrastructure**: Automatically audits sanctioned equipment (workbenches, machinery, seating capacity) using baseline image comparison (SSIM) and apparent operability heuristics.
 3. **Bandwidth & Privacy by Design**: All computer vision runs 100% on the local edge CPU. Raw video never leaves the centre; faces are blurred before storage or transmission, ensuring strict compliance with India's **DPDP Act, 2023**.
@@ -47,7 +47,7 @@ skillsight/
     centre_TC001.yaml          # Example centre configuration (zones, inventory, timetable)
     baselines/                 # Reference baseline snapshots for SSIM comparison
   data/
-    sample_videos/             # 7 demo scenarios (normal, overreported, empty, etc.)
+    generate_sample_data.py    # Local test clip generator for simulated scenarios
     submitted_attendance.csv   # Portal attendance records for cross-referencing
     annotations/               # Ground truth JSON annotations for automated evaluation
   eval/
@@ -67,7 +67,7 @@ skillsight/
 
 ---
 
-## Quickstart: 5-Minute Demo Walkthrough
+## Quickstart: Running the System
 
 ### Option A: Local Native Execution
 
@@ -90,17 +90,20 @@ cd dashboard && npm run dev -- --host 127.0.0.1 --port 3000
 ```
 Open your browser at **`http://localhost:3000`** to access the dashboard.
 
-#### 3. Run Demo Compliance Scenarios
+#### 3. Run Live Camera / CCTV Stream
+You can test the compliance agent directly with any connected USB camera, laptop webcam, or CCTV RTSP feed:
 
-| Demo Scenario | Video Input | Expected System Behavior | Command |
-| :--- | :--- | :--- | :--- |
-| **Normal Session** | `normal.mp4` | 10 trainees detected = 10 submitted. **0 alerts fired**. Compliance Score: **100%**. | `PYTHONPATH=. python -m edge_agent --source data/sample_videos/normal.mp4 --session SESS_NORMAL` |
-| **Attendance Overreporting** | `overreported.mp4` | 4 trainees detected vs 25 submitted. **Fires `ATTENDANCE_OVERREPORT`**. Score drops to **80%**. | `PYTHONPATH=. python -m edge_agent --source data/sample_videos/overreported.mp4 --session SESS_OVERREPORT` |
-| **Empty Session** | `empty_session.mp4` | 0 trainees detected vs 20 claimed. **Fires `SESSION_EMPTY`**. High severity alert. | `PYTHONPATH=. python -m edge_agent --source data/sample_videos/empty_session.mp4 --session SESS_EMPTY` |
-| **Stolen / Missing Workbench** | `workbench_missing.mp4` | WB-02 absent; baseline SSIM delta > threshold across 3 checks. **Fires `ITEM_MISSING`**. | `PYTHONPATH=. python -m edge_agent --source data/sample_videos/workbench_missing.mp4 --session SESS_WB_MISSING` |
-| **Machine Idle / Unoperated** | `machine_idle.mp4` | Lathe machine untouched, 0 operator motion, red indicator. **Fires `EQUIPMENT_POSSIBLY_NONFUNCTIONAL`**. | `PYTHONPATH=. python -m edge_agent --source data/sample_videos/machine_idle.mp4 --session SESS_MACHINE_IDLE --camera cam2` |
-| **Low-Light Classroom** | `low_light.mp4` | 480p noisy feed; edge CLAHE equalizes contrast. **Headcount cleanly recovered, 0 false alarms**. | `PYTHONPATH=. python -m edge_agent --source data/sample_videos/low_light.mp4 --session SESS_LOW_LIGHT` |
-| **Obstructed Camera** | `camera_obstructed.mp4` | Frame variance < 20.0. **Fires `CAMERA_OFFLINE` / OBSTRUCTED**. | `PYTHONPATH=. python -m edge_agent --source data/sample_videos/camera_obstructed.mp4 --session SESS_OBSTRUCTED` |
+```bash
+# Live Laptop Camera / USB Webcam (Camera index 0)
+PYTHONPATH=. python -m edge_agent --source 0 --live
+
+# Live CCTV Network Stream (RTSP / HTTP)
+PYTHONPATH=. python -m edge_agent --source rtsp://admin:pass@192.168.1.100:554/stream1
+
+# (Optional) Generate deterministic test clips for simulation testing:
+python data/generate_sample_data.py
+PYTHONPATH=. python -m edge_agent --source data/sample_videos/overreported.mp4 --session SESS_OVERREPORT
+```
 
 #### 4. Dashboard Interaction & Ministry Export
 1. Observe the live updating **Compliance Index**, **Attendance Chart**, and **Sanctioned Inventory Checklist**.

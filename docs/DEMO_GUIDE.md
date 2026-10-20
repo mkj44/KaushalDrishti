@@ -37,7 +37,7 @@ cd dashboard && npm run dev -- --host 127.0.0.1 --port 3000
 > 
 > *Raw CCTV video streaming fails because rural centres lack high-speed internet, manual review is impossible across thousands of centres, and transmitting unblurred footage violates India's **DPDP Act, 2023**.*
 > 
-> *We built **SkillSight**: an edge AI pipeline running on a standard CPU. It blurs faces at the edge, calculates actual headcount, audits machine operability, and sends compliance signals using **under 8 KB of data per day**."*
+> *We built **SkillSight**: an edge computer vision pipeline running on a standard CPU. It blurs faces at the edge, calculates actual headcount, audits machine operability, and sends compliance signals using **under 8 KB of data per day**."*
 
 ---
 
@@ -115,7 +115,7 @@ PYTHONPATH=. ./venv/bin/python -m edge_agent --source 0 --live
 
 ### Q1: "How does this work in remote rural areas with poor internet?"
 > **Answer:**  
-> *"All AI inference runs locally on the edge device CPU. Raw video never leaves the room. The edge agent only sends lightweight JSON events and compressed WebP thumbnails. Our empirical measurement report shows it uses **under 8 KB of data per day** (>99.98% bandwidth reduction). If the internet drops completely, our on-disk SQLite queue stores events and flushes them when reconnected, with an ultra-compact 37-byte SMS fallback string for 2G networks."*
+> *"All computer vision inference runs locally on the edge device CPU. Raw video never leaves the room. The edge agent only sends lightweight JSON events and compressed WebP thumbnails. Our empirical measurement report shows it uses **under 8 KB of data per day** (>99.98% bandwidth reduction). If the internet drops completely, our on-disk SQLite queue stores events and flushes them when reconnected, with an ultra-compact 37-byte SMS fallback string for 2G networks."*
 
 ### Q2: "What if a student walks outside in the hallway or corridor?"
 > **Answer:**  

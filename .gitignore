@@ -28,6 +28,12 @@ edge_agent/offline_queue.db
 *.pt
 *.onnx
 
+# Video files & media
+data/sample_videos/
+*.mp4
+*.avi
+*.mkv
+
 # OS files
 .DS_Store
 Thumbs.db

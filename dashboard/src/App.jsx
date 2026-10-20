@@ -159,7 +159,7 @@ export default function App() {
                 Gov Compliance
               </span>
             </div>
-            <p className="text-xs text-slate-400">AI Edge Analytics for Skilling Scheme Inspections</p>
+            <p className="text-xs text-slate-400">Automated Edge Vision Analytics for Skilling Scheme Inspections</p>
           </div>
         </div>
 
