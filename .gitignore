@@ -12,6 +12,7 @@ ENV/
 # Node & Frontend builds
 dashboard/node_modules/
 dashboard/dist/
+dashboard/dist-demo/
 .npm
 npm-debug.log*
 

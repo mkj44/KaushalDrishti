@@ -5,6 +5,8 @@ import Inspection from './pages/Inspection.jsx';
 import Analyse from './pages/Analyse.jsx';
 import AlertModal from './components/AlertModal.jsx';
 
+const DEMO = Boolean(import.meta.env.VITE_DEMO);
+
 const PAGES = [
   { id: 'overview', label: 'Centres', icon: LayoutGrid },
   { id: 'inspection', label: 'Inspection', icon: ClipboardCheck },
@@ -71,15 +73,20 @@ export default function App() {
               <button aria-pressed={role === 'admin'} onClick={() => setRole('admin')}>Directorate</button>
             </div>
           </div>
-          <a className="btn btn-ghost" style={{ color: '#b7c2d6', justifyContent: 'flex-start', padding: '6px 0' }}
+          {!DEMO && <a className="btn btn-ghost" style={{ color: '#b7c2d6', justifyContent: 'flex-start', padding: '6px 0' }}
             href={`/api/v1/export/alerts?centre_id=${selectedId || ''}`} target="_blank" rel="noreferrer">
             <Download size={16} aria-hidden="true" /> <span className="faint-note">Export alerts (CSV)</span>
-          </a>
+          </a>}
           <p className="faint-note">MSDE skilling schemes. Faces are blurred on site before any image is stored.</p>
         </div>
       </aside>
 
       <main className="main">
+        {DEMO && (
+          <div className="insight insight-info" style={{ marginBottom: 20 }} role="note">
+            Demo build: centres and alerts are a snapshot from a real run. Uploaded videos replay a recorded analysis of a sample clip instead of being analysed.
+          </div>
+        )}
         {apiDown && (
           <div className="insight insight-warn" style={{ marginBottom: 20 }} role="status">
             Can't reach the compliance API on port 8000. Start it with <code>./start_services.sh</code>, then this page refreshes on its own.
